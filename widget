@@ -1,0 +1,85 @@
+import React, { useState } from 'react';
+import { Settings2 } from 'lucide-react';
+
+const WordCountWidget = () => {
+  const [wordCount, setWordCount] = useState(0);
+  const [goal, setGoal] = useState(50000); // Default NaNoWriMo goal
+  const [showSettings, setShowSettings] = useState(false);
+
+  const progress = (wordCount / goal) * 100;
+  const remainingWords = Math.max(0, goal - wordCount);
+  const wordsPerDay = Math.ceil(remainingWords / 30); // Assuming 30 days like NaNoWriMo
+
+  const handleInputChange = (e) => {
+    const text = e.target.value;
+    const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+    setWordCount(words);
+  };
+
+  return (
+    <div className="max-w-md p-6 bg-white rounded-lg shadow-md">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold text-gray-800">Word Count Tracker</h2>
+        <button 
+          onClick={() => setShowSettings(!showSettings)}
+          className="p-2 text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100"
+        >
+          <Settings2 size={20} />
+        </button>
+      </div>
+
+      {/* Settings Panel */}
+      {showSettings && (
+        <div className="mb-4 p-3 bg-gray-50 rounded-md">
+          <label className="block text-sm text-gray-600 mb-1">Word Goal:</label>
+          <input
+            type="number"
+            value={goal}
+            onChange={(e) => setGoal(Math.max(1, parseInt(e.target.value) || 0))}
+            className="w-full p-2 border rounded-md"
+          />
+        </div>
+      )}
+
+      {/* Progress Bar */}
+      <div className="mb-4">
+        <div className="w-full h-4 bg-gray-200 rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-blue-500 transition-all duration-300"
+            style={{ width: `${Math.min(100, progress)}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <div className="p-3 bg-gray-50 rounded-md">
+          <div className="text-2xl font-bold text-gray-800">{wordCount}</div>
+          <div className="text-sm text-gray-600">Words Written</div>
+        </div>
+        <div className="p-3 bg-gray-50 rounded-md">
+          <div className="text-2xl font-bold text-gray-800">{Math.round(progress)}%</div>
+          <div className="text-sm text-gray-600">Complete</div>
+        </div>
+        <div className="p-3 bg-gray-50 rounded-md">
+          <div className="text-2xl font-bold text-gray-800">{remainingWords}</div>
+          <div className="text-sm text-gray-600">Words Left</div>
+        </div>
+        <div className="p-3 bg-gray-50 rounded-md">
+          <div className="text-2xl font-bold text-gray-800">{wordsPerDay}</div>
+          <div className="text-sm text-gray-600">Words/Day</div>
+        </div>
+      </div>
+
+      {/* Text Input */}
+      <textarea
+        className="w-full p-3 border rounded-md h-32"
+        placeholder="Paste your text here to count words..."
+        onChange={handleInputChange}
+      />
+    </div>
+  );
+};
+
+export default WordCountWidget;
